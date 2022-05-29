@@ -2,12 +2,11 @@
 module CronMyLife.Presentation where
 
 import CronMyLife.Model
-import Data.Aeson (ToJSON, encode)
 import Data.Map (Map, traverseWithKey)
-import Data.Text.Encoding (decodeUtf8)
 import Text.Printf
+import Data.Int (Int64)
 
-showCentralSchedulerDataConsole :: CentralSchedulerData -> IO (Map String ())
+showCentralSchedulerDataConsole :: CentralSchedulerData -> IO (Map Int64 ())
 showCentralSchedulerDataConsole xs =
   traverseWithKey
     showDataCLI
@@ -31,6 +30,6 @@ showActivityCLI k activity = formatted
       \  \t%s\n\
       \  time: %s\n" sepCLI k sepCLI (activityName activity) (latCoords $ activityLocation activity) (longCoords $ activityLocation activity) (categoriesData) ""
 
-showDataCLI :: String -> [Activity] -> IO ()
-showDataCLI k v = putStrLn (concatMap (showActivityCLI k) v)
+showDataCLI :: Int64 -> [Activity] -> IO ()
+showDataCLI k v = putStrLn (concatMap (showActivityCLI $ show k) v)
   

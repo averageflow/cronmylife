@@ -5,10 +5,9 @@ module CronMyLife.Model where
 
 import Data.Aeson
 import Data.Map
-import Data.Time.Clock.POSIX
 import Data.Typeable (Typeable)
 import GHC.Generics
-import Data.Time
+import Data.Int (Int64)
 
 newtype ActivityCategory = ActivityCategory
   { activityCategoryName :: String
@@ -16,8 +15,8 @@ newtype ActivityCategory = ActivityCategory
   deriving (Show, Eq, Generic, FromJSON, ToJSON)
 
 data ActivityTimeFrame = ActivityTimeFrame
-  { activityTimeFrameDurationInSeconds :: Float,
-    activityTimeFrameStartInstant :: UTCTime
+  { activityTimeFrameDurationInSeconds :: Int64,
+    activityTimeFrameStartInstant :: Int64
   }
   deriving (Show, Eq, Generic, FromJSON, ToJSON)
 
@@ -34,10 +33,10 @@ data Activity = Activity
     activityCategories :: [ActivityCategory],
     activityTimeFrame :: ActivityTimeFrame
   }
-  deriving (Show, Eq, Generic, FromJSON, ToJSON)
+  deriving (Show, Eq, Generic, FromJSON, ToJSON, Typeable)
 
 data CentralSchedulerData = CentralSchedulerData
   { scheduleOwnerName :: String,
-    scheduleData :: Map String [Activity]
+    scheduleData :: Map Int64 [Activity]
   }
   deriving (Show, Eq, Generic, FromJSON, ToJSON)
