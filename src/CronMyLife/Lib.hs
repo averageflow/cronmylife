@@ -19,8 +19,8 @@ getMockCentralSchedulerData xs now =
   CentralSchedulerData
     "Joe"
     ( fromList
-        [ (show now, getMockActivity now),
-          ("2022-05-28 20:36:00.976250179 UTC", getMockActivity now)
+        [ (show now, [getMockActivity now]),
+          ("2022-05-28 20:36:00.976250179 UTC", [getMockActivity now])
         ]
     )
 

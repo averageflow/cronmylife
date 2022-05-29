@@ -4,7 +4,6 @@
 module CronMyLife.Model where
 
 import Data.Aeson
-import Data.Aeson.Types
 import Data.Map
 import Data.Time.Clock.POSIX
 import Data.Typeable (Typeable)
@@ -39,9 +38,6 @@ data Activity = Activity
 
 data CentralSchedulerData = CentralSchedulerData
   { scheduleOwnerName :: String,
-    scheduleData :: Map String Activity
+    scheduleData :: Map String [Activity]
   }
   deriving (Show, Eq, Generic, FromJSON, ToJSON)
-
--- Latitude: 52.511628 / N 52° 30' 41.859''
--- Longitude: 4.941609 / E 4° 56' 29.791''
