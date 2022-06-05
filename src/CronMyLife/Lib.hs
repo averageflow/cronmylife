@@ -11,10 +11,7 @@ module CronMyLife.Lib where
 
 import CronMyLife.Model
 import Data.Map hiding (map)
-import Database.SQLite.Simple
-import Database.Beam.Sqlite
-import Database.Beam
-import CronMyLife.Repository.Beam
+import CronMyLife.Repository.Opaleye
 import Data.Int (Int64)
 import qualified Data.Map as Map hiding (map)
 import Data.Aeson (encode)
@@ -29,7 +26,7 @@ getMockActivity now =
     [ActivityCategory "Perfecting skills", ActivityCategory "Computer"]
     (ActivityTimeFrame 3600 now)
 
-getMockCentralSchedulerData :: [Int] -> Int64 -> CentralSchedulerData
+getMockCentralSchedulerData :: [Int] -> Int64 -> ApplicationState
 getMockCentralSchedulerData xs now =
   CentralSchedulerData
     "Joe"
@@ -39,13 +36,7 @@ getMockCentralSchedulerData xs now =
         ]
     )
 
-modelToPersistentEntity :: Activity -> ScheduleItem
-modelToPersistentEntity x = do
-  let encoded = encode x
-  ScheduleItem 
-    (activityTimeFrameStartInstant . activityTimeFrame $ x)  
-    (activityTimeFrameDurationInSeconds . activityTimeFrame $ x)
-    (show $ toStrict encoded)
+
 
 startApplication :: IO ()
 startApplication = do
@@ -55,12 +46,12 @@ startApplication = do
   -- storeScheduleStateJSONFile scheduleData
   now <- round `fmap` getPOSIXTime
 
-  let fakeData = scheduleData (getMockCentralSchedulerData [1..20] now)
-  let t = map modelToPersistentEntity (concatMap snd $ Map.toList fakeData)
+  let fakeData = scheduleData (getMockCentralSchedulerData [1, 2] now)
+  
 
-  conn <- open "cronmylife.db"
-  {- for debug output -}
-  runBeamSqliteDebug putStrLn conn $
-    runInsert $
-      Database.Beam.insert (_scheduleItems scheduleDb) $
-          insertValues t
+  -- conn <- open "cronmylife.db"
+  -- CronMyLife.Repository.Opaleye.save conn t
+
+  -- CronMyLife.Repository.Opaleye.find conn t
+  print fakeData
+

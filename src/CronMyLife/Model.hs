@@ -9,33 +9,35 @@ import Data.Typeable (Typeable)
 import GHC.Generics
 import Data.Int (Int64)
 
-newtype ActivityCategory = ActivityCategory
-  { activityCategoryName :: String
+data ActivityCategory = ActivityCategory
+  { categoryName :: String,
+    categoryIcon :: String
   }
   deriving (Show, Eq, Generic, FromJSON, ToJSON)
 
 data ActivityTimeFrame = ActivityTimeFrame
-  { activityTimeFrameDurationInSeconds :: Int64,
-    activityTimeFrameStartInstant :: Int64
+  { durationSeconds :: Int64,
+    startInstant :: Int64
   }
   deriving (Show, Eq, Generic, FromJSON, ToJSON)
 
 data ActivityLocation = ActivityLocation
-  { latCoords :: String,
-    longCoords :: String,
-    activityLocationName :: String
+  { latitudeCoordinates :: String,
+    longitudeCoordinates :: String,
+    locationName :: String,
+    mapURL :: String
   }
   deriving (Show, Eq, Generic, FromJSON, ToJSON)
 
 data Activity = Activity
   { activityName :: String,
-    activityLocation :: ActivityLocation,
+    activityLocations :: [ActivityLocation],
     activityCategories :: [ActivityCategory],
     activityTimeFrame :: ActivityTimeFrame
   }
   deriving (Show, Eq, Generic, FromJSON, ToJSON, Typeable)
 
-data CentralSchedulerData = CentralSchedulerData
+data ApplicationState = ApplicationState
   { scheduleOwnerName :: String,
     scheduleData :: Map Int64 [Activity]
   }
