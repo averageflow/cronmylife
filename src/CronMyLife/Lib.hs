@@ -1,72 +1,25 @@
-
-{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE FlexibleContexts           #-}
+{-# LANGUAGE GADTs                      #-}
+{-# LANGUAGE MultiParamTypeClasses      #-}
+{-# LANGUAGE OverloadedStrings          #-}
+{-# LANGUAGE TypeFamilies               #-}
+{-# LANGUAGE DerivingStrategies #-}
+{-# LANGUAGE UndecidableInstances #-}
+{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE GADTs #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE FunctionalDependencies #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE TemplateHaskell #-}
-{-# LANGUAGE TypeFamilies #-}
-{-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE DefaultSignatures #-}
-
 
 module CronMyLife.Lib where
 
-import CronMyLife.Model
-import Data.Map hiding (map)
-import CronMyLife.Repository.Opaleye
-import Data.Int (Int64)
-import qualified Data.Map as Map hiding (map)
-import Data.Aeson (encode)
-import Data.ByteString.Lazy (toStrict)
-import Opaleye
-
-import Prelude hiding (sum)
-import Data.Int
-import Data.Time.Clock.POSIX
-import Data.Profunctor.Product.Default
+import           Database.Persist.Sqlite
+import CronMyLife.Persistent.Repository
 
 
-getMockActivity :: Int64 -> Activity
-getMockActivity now =
-  Activity
-    "Haskell Practice"
-    [ActivityLocation "N 52° 30' 41.859''" "E 4° 56' 29.791''" "Home" ""]
-    [ActivityCategory "Perfecting skills" "", ActivityCategory "Computer" ""]
-    (ActivityTimeFrame 3600 now)
-
-getMockCentralSchedulerData :: [Int] -> Int64 -> ApplicationState
-getMockCentralSchedulerData xs now =
-  ApplicationState
-    "Joe"
-    ( fromList
-        [ (now + 1, [getMockActivity $ now + 1]),
-          (now + 2, [getMockActivity $ now + 2])
-        ]
-    )
+conn :: SqliteConnectionInfo
+conn = mkSqliteConnectionInfo "./cronmylife.db"
 
 
-
+startApplication :: IO()
 startApplication = do
-  now <- round `fmap` getPOSIXTime
-
-  let fakeData = scheduleData (getMockCentralSchedulerData [1, 2] now)
-
-  conn <- getDbConn
-
-  insertResult <- runInsert conn (insertActivities [(ActivityEntity Nothing 1 1 Nothing)])
-
-  print insertResult
-
-  findResult ::[ActivityEntityFieldRead] <- runSelect conn findAllActivities
-
-  print(findResult)
-
-
-
-
-printSql :: Default Unpackspec a a => Select a -> IO ()
-printSql = putStrLn . maybe "Empty select" id . showSql
+    initialSchemaSetup conn
+    joe <- createAndGetJoe conn
+    print joe
