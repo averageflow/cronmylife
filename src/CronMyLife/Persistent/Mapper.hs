@@ -3,14 +3,12 @@ module CronMyLife.Persistent.Mapper where
 import CronMyLife.Model
 import CronMyLife.Persistent.Entities
 
-mapScheduleOwnerEntityToModel :: ScheduleOwnersEntity -> Maybe ScheduleOwner
+mapScheduleOwnerEntityToModel :: ScheduleOwnersEntity -> ScheduleOwner
 mapScheduleOwnerEntityToModel x =
-  Just
-    ( ScheduleOwner
-        (scheduleOwnersEntityName x)
-        (scheduleOwnersEntityDescription x)
-        (scheduleOwnersEntityAvatar x)
-    )
+  ScheduleOwner
+    (scheduleOwnersEntityName x)
+    (scheduleOwnersEntityDescription x)
+    (scheduleOwnersEntityAvatar x)
 
 mapScheduleOwnerModelToEntity :: ScheduleOwner -> ScheduleOwnersEntity
 mapScheduleOwnerModelToEntity x =

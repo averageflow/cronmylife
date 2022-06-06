@@ -28,6 +28,10 @@ ActivityCategoriesEntity
     icon String Maybe 
     deriving Show
 
+ActivitiesActivityCategoriesEntity
+    activitiesEntityId ActivitiesEntityId
+    activityCategoriesEntityId ActivityCategoriesEntityId
+
 ActivityLocationsEntity
     latitude String Maybe 
     longitude String Maybe
@@ -35,17 +39,20 @@ ActivityLocationsEntity
     mapURL String Maybe
     deriving Show
 
+ActivitiesActivityLocationsEntity
+    activitiesEntityId ActivitiesEntityId
+    activityLocationsEntityId ActivityLocationsEntityId
+
 ActivitiesEntity
-    scheduleId Int
+    schedulesEntityId SchedulesEntityId
     durationSeconds Int
     startInstant Int
     name String
-    ActivitiesScheduleIDX scheduleId
     deriving Show
 
 SchedulesEntity
-    scheduleOwnerId Int
-    SchedulesOwnersIDX scheduleOwnerId
+    scheduleOwnersEntityId ScheduleOwnersEntityId
+    scheduleName String
     deriving Show
 
 ScheduleOwnersEntity
