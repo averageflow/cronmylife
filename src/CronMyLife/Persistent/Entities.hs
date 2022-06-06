@@ -23,42 +23,34 @@ import Database.Persist.TH
 share
   [mkPersist sqlSettings, mkEntityDefList "entityDefs"]
   [persistLowerCase|
-ActivityCategories
-    identifier Int
+ActivityCategoriesEntity
     name String
     icon String Maybe 
-    ActivityCategoriesPK identifier
     deriving Show
 
-ActivityLocations
-    identifier Int
+ActivityLocationsEntity
     latitude String Maybe 
     longitude String Maybe
     name String
     mapURL String Maybe
-    ActivityLocationsPK identifier
     deriving Show
 
-Activities
-    identifier Int
+ActivitiesEntity
     scheduleId Int
     durationSeconds Int
     startInstant Int
     name String
-    ActivitiesPK identifier scheduleId
+    ActivitiesScheduleIDX scheduleId
     deriving Show
 
-Schedules
-    identifier Int 
+SchedulesEntity
     scheduleOwnerId Int
-    SchedulesPK identifier scheduleOwnerId
+    SchedulesOwnersIDX scheduleOwnerId
     deriving Show
 
-ScheduleOwners
-    identifier Int
+ScheduleOwnersEntity
     name String
     description String Maybe
     avatar String Maybe
-    ScheduleOwnersPK identifier
-    deriving Show
+    deriving Show 
 |]

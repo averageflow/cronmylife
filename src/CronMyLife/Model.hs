@@ -7,38 +7,56 @@ import Data.Aeson
 import Data.Map
 import Data.Typeable (Typeable)
 import GHC.Generics
-import Data.Int (Int64)
 
 data ActivityCategory = ActivityCategory
-  { categoryName :: String,
+  { --categoryIdentifier :: Maybe Int,
+    categoryName :: String,
     categoryIcon :: String
   }
   deriving (Show, Eq, Generic, FromJSON, ToJSON)
 
 data ActivityTimeFrame = ActivityTimeFrame
-  { durationSeconds :: Int64,
-    startInstant :: Int64
+  { durationSeconds :: Int,
+    startInstant :: Int
   }
   deriving (Show, Eq, Generic, FromJSON, ToJSON)
 
 data ActivityLocation = ActivityLocation
-  { latitudeCoordinates :: String,
-    longitudeCoordinates :: String,
+  { --activityLocationIdentifier :: Maybe Int,
+    latitude :: String,
+    longitude :: String,
     locationName :: String,
     mapURL :: String
   }
   deriving (Show, Eq, Generic, FromJSON, ToJSON)
 
 data Activity = Activity
-  { activityName :: String,
+  { --activityIdentifier :: Maybe Int,
+    activityScheduleId :: Maybe Int,
+    activityName :: String,
     activityLocations :: [ActivityLocation],
     activityCategories :: [ActivityCategory],
     activityTimeFrame :: ActivityTimeFrame
   }
   deriving (Show, Eq, Generic, FromJSON, ToJSON, Typeable)
 
+data Schedule = Schedule
+  { --scheduleIdentifier :: Maybe Int,
+    scheduleOwnerId :: Maybe Int,
+    scheduleActivities :: Map Int [Activity]
+  }
+  deriving (Show, Eq, Generic, FromJSON, ToJSON)
+
 data ApplicationState = ApplicationState
-  { scheduleOwnerName :: String,
-    scheduleData :: Map Int64 [Activity]
+  { scheduleOwner :: ScheduleOwner,
+    scheduleData :: Schedule
+  }
+  deriving (Show, Eq, Generic, FromJSON, ToJSON)
+
+data ScheduleOwner = ScheduleOwner
+  { --scheduleOwnerIdentifier :: Maybe Int,
+    scheduleOwnerName :: String,
+    scheduleOwnerDescription :: Maybe String,
+    scheduleOwnerAvatar :: Maybe String
   }
   deriving (Show, Eq, Generic, FromJSON, ToJSON)

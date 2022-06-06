@@ -19,16 +19,24 @@ import CronMyLife.Persistent.Entities
 import Database.Esqueleto hiding (from, on)
 import Database.Esqueleto.Experimental
 import Database.Persist.Sqlite
+import CronMyLife.Persistent.Mapper (mapScheduleOwnerEntityToModel)
+import CronMyLife.Model
 
 
-runAction conn action = runStdoutLoggingT $ withSqliteConnInfo (conn) $ \backend -> runReaderT action backend
+runAction :: MonadUnliftIO m => SqliteConnectionInfo -> ReaderT SqlBackend (LoggingT m) a -> m a
+runAction conn action = runStdoutLoggingT $ withSqliteConnInfo conn $ \backend -> runReaderT action backend
 
+createAndGetJoe :: MonadUnliftIO m => SqliteConnectionInfo -> m (Maybe ScheduleOwnersEntity)
 createAndGetJoe conn = runAction conn $ do
-  joesId <- insert $ ScheduleOwners 1 "Joe" (Just "Joe's Description") (Just "λ")
-  get joesId
+    joesId <- insert $ ScheduleOwnersEntity "Joe" (Just "Joe's Description") (Just "λ")
+    get joesId
 
-initialSchemaSetup conn = runAction conn $ do
-  runMigration $ migrate entityDefs $ entityDef (Nothing :: Maybe ScheduleOwners)
+-- mapResultSet :: Maybe ScheduleOwnersEntity -> Maybe ScheduleOwner
+-- mapResultSet = maybe Nothing mapScheduleOwnerEntityToModel
+
+initialSchemaSetup :: MonadUnliftIO m => SqliteConnectionInfo -> m ()
+initialSchemaSetup conn = runAction conn $
+  runMigration $ migrate entityDefs $ entityDef (Nothing :: Maybe ScheduleOwnersEntity)
 
 -- runSqlite' :: (MonadUnliftIO m) => Text -> ReaderT SqlBackend (NoLoggingT (ResourceT m)) a -> m a
 -- runSqlite' = runSqlite
