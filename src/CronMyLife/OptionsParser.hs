@@ -9,11 +9,7 @@ cronMyLifeOptions :: Parser CommandLineCronMyLifeOptions
 cronMyLifeOptions =
   CommandLineCronMyLifeOptions
     <$> switch
-      ( long "setup-db"
-          <> help ""
-      )
-    <*> switch
-      ( long "setup-user"
+      ( long "setup"
           <> help ""
       )
     <*> option

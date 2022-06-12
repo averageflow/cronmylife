@@ -18,7 +18,8 @@ import System.Exit
 
 
 import CronMyLife.Persistence.Repository
-import Data.Int
+import Database.PostgreSQL.Simple (Only(fromOnly))
+import CronMyLife.CLIWizards
 
 
 runApplication :: IO ()
@@ -35,43 +36,10 @@ runApplication = enterEventFlow =<< execParser opts
 enterEventFlow :: CommandLineCronMyLifeOptions -> IO ()
 enterEventFlow options = do
   conn <- setupConn
-  if setupDatabase options
+  if setup options
     then do
       setupDatabaseSchema conn 
-      putStrLn "Successfully setup DB! Please now start the user creation wizard!"
-      exitSuccess
+      userCreationWizard conn
     else pure ()
 
-  if (setupUser options)
-    then do
-      userId <- createUser conn "Joe"
-      print userId
-
-      -- TODO: create a wizard-like experience
-      -- (joeId, joe) <- createAndGetJoe conn
-      -- print joe
-      -- case joe of
-      --   Nothing -> print ("Error creating user") >> exitFailure
-      --   Just x -> do
-      --     (schedId, sched) <- createAndGetSchedule conn (joeId)
-      --     print (sched)
-      --     exitSuccess
-    else pure ()
-
-  -- 2 different flow, or user gives userid and schedule
-  -- or then userid only then we show list of schedules
-
-  -- case (userId options) of
-  --   Nothing -> putStrLn "Please provide your user id!" >> exitFailure
-  --   Just x -> do
-  --     (joeId, joe) <- getUserDetails conn x
-  --     print joe
-
--- else pure ()
-
--- case joe of
---   Nothing -> print ("Could not find expected user in DB! No schedule to show! Exiting") >> exitFailure
---   Just x -> do
---     print (mapScheduleOwnerEntityToModel x)
---     sched <- createAndGetSchedule conn (toSqlKey (1))
---     print (sched)
+  

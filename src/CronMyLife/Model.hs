@@ -63,8 +63,7 @@ data ScheduleOwner = ScheduleOwner
   deriving (Show, Eq, Generic, FromJSON, ToJSON)
 
 data CommandLineCronMyLifeOptions = CommandLineCronMyLifeOptions
-  { setupDatabase :: Bool,
-    setupUser :: Bool,
+  { setup :: Bool,
     userId :: Maybe Int64,
     scheduleId :: Maybe Int64
   }

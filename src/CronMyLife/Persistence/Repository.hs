@@ -1,42 +1,53 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE QuasiQuotes #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module CronMyLife.Persistence.Repository where
-import System.IO
-import Database.PostgreSQL.Simple
-import Data.String (IsString(fromString))
-import Data.Int
--- setupDatabaseSchema
---  createUser :: all required details -> INT64
---  getUser :: INT64 -> user details
 
-q :: Query
-q = "select ?"
+import CronMyLife.Persistence.Schema
+import Data.String (IsString (fromString))
+import Database.PostgreSQL.Simple
+import Text.RawString.QQ
+
+--  getUser :: INT64 -> user details
 
 -- getSchedulesForUser :: INT64 -> scheduleIDs
 -- getSchedule :: INT64 -> timeperiod -> schedule data between certain time period
 localPG :: ConnectInfo
-localPG = defaultConnectInfo
-        { connectHost = "127.0.0.1"
-        , connectDatabase = "cronmylife"
-        , connectUser = "atp"
-        , connectPassword = "atp"
-        }
+localPG =
+  defaultConnectInfo
+    { connectHost = "127.0.0.1",
+      connectDatabase = "cronmylife",
+      connectUser = "atp",
+      connectPassword = "atp"
+    }
 
 setupConn :: IO Connection
 setupConn = do
-    conn <- connect localPG
-    pure (conn)
+  connect localPG
 
 setupDatabaseSchema :: Connection -> IO ()
-setupDatabaseSchema conn = do
-    handle <- openFile "resources/sql/changelog.sql" ReadMode
-    contents <- hGetContents handle
-    _ <- execute conn (fromString contents) ()
-    hClose handle
-    putStrLn ""
+setupDatabaseSchema conn = withTransaction conn $ do
+  mapM_ (\x -> execute conn (fromString x) ()) ddlStatements
+  putStrLn "Successfully setup database schema!"
+  where
+    ddlStatements =
+      [ createUsersTableStmt,
+        createSchedulesTableStmt,
+        createUserToScheduleRelationTableStmt,
+        createCategoriesTableStmt,
+        createActivitiesTableStmt,
+        createActivityToCategoryRelationTableStmt,
+        createLocationsTableStmt,
+        createActivityToLocationTableStmt
+      ]
 
-createUser :: Connection -> String -> IO [Only Int]
-createUser conn wantedName = do
-    let q = "INSERT INTO users (itemName) VALUES (?) RETURNING id;" 
-    query conn q (Only wantedName)
+createUser :: Connection -> String  -> String -> IO [Only Int]
+createUser conn wantedName wantedDescription = do
+  let q = [r|INSERT INTO users (itemName, itemDescription) VALUES (?, ?) RETURNING id;|]
+  query conn q (wantedName, wantedDescription)
+
+createSchedule :: Connection -> String -> String -> IO [Only Int]
+createSchedule conn wantedName wantedDescription = do
+  let q = [r|INSERT INTO schedules (itemName, itemDescription) VALUES (?, ?) RETURNING id;|]
+  query conn q (wantedName, wantedDescription)
