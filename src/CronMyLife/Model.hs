@@ -4,6 +4,7 @@
 module CronMyLife.Model where
 
 import Data.Aeson
+import Data.Int (Int64)
 import Data.Map
 import Data.Typeable (Typeable)
 import GHC.Generics
@@ -60,3 +61,11 @@ data ScheduleOwner = ScheduleOwner
     scheduleOwnerAvatar :: Maybe String
   }
   deriving (Show, Eq, Generic, FromJSON, ToJSON)
+
+data CommandLineCronMyLifeOptions = CommandLineCronMyLifeOptions
+  { setupDatabase :: Bool,
+    setupUser :: Bool,
+    userId :: Maybe Int64,
+    scheduleId :: Maybe Int64
+  }
+  deriving (Show, Eq)
