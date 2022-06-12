@@ -12,20 +12,17 @@ cronMyLifeOptions =
       ( long "setup"
           <> help ""
       )
-    <*> option
-      auto
-      ( long "user-id"
-          <> help ""
-          <> value (Just 0)
-          <> metavar "INT"
-      )
-    <*> option
-      auto
-      ( long "schedule-id"
-          <> help ""
-          <> value (Just 0)
-          <> metavar "INT"
-      )
+    <*> strOption
+          ( long "user-id"
+         <> metavar "NUMERIC_USER_ID"
+         <> help "The ID of the user, to be used as primary key" )
+    -- <*> option
+    --   auto
+    --   ( long "schedule-id"
+    --       <> help ""
+    --       <> value (Just 0)
+    --       <> metavar "INT"
+    --   )
 
 --   , quiet      :: Bool
 --   , enthusiasm :: Int

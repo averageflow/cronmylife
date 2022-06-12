@@ -8,22 +8,23 @@ import Data.Int (Int64)
 import Data.Map
 import Data.Typeable (Typeable)
 import GHC.Generics
+import Data.Time (UTCTime)
 
 data ActivityCategory = ActivityCategory
-  { --categoryIdentifier :: Maybe Int,
+  { --categoryIdentifier :: Maybe Int64,
     categoryName :: String,
     categoryIcon :: String
   }
   deriving (Show, Eq, Generic, FromJSON, ToJSON)
 
 data ActivityTimeFrame = ActivityTimeFrame
-  { durationSeconds :: Int,
-    startInstant :: Int
+  { durationSeconds :: Int64,
+    startInstant :: UTCTime
   }
   deriving (Show, Eq, Generic, FromJSON, ToJSON)
 
 data ActivityLocation = ActivityLocation
-  { --activityLocationIdentifier :: Maybe Int,
+  { --activityLocationIdentifier :: Maybe Int64,
     latitude :: String,
     longitude :: String,
     locationName :: String,
@@ -32,8 +33,8 @@ data ActivityLocation = ActivityLocation
   deriving (Show, Eq, Generic, FromJSON, ToJSON)
 
 data Activity = Activity
-  { --activityIdentifier :: Maybe Int,
-    activityScheduleId :: Maybe Int,
+  { --activityIdentifier :: Maybe Int64,
+    activityScheduleId :: Maybe Int64,
     activityName :: String,
     activityLocations :: [ActivityLocation],
     activityCategories :: [ActivityCategory],
@@ -42,9 +43,9 @@ data Activity = Activity
   deriving (Show, Eq, Generic, FromJSON, ToJSON, Typeable)
 
 data Schedule = Schedule
-  { --scheduleIdentifier :: Maybe Int,
-    scheduleOwnerId :: Maybe Int,
-    scheduleActivities :: Map Int [Activity]
+  { --scheduleIdentifier :: Maybe Int64,
+    scheduleOwnerId :: Maybe Int64,
+    scheduleActivities :: Map Int64 [Activity]
   }
   deriving (Show, Eq, Generic, FromJSON, ToJSON)
 
@@ -55,7 +56,7 @@ data ApplicationState = ApplicationState
   deriving (Show, Eq, Generic, FromJSON, ToJSON)
 
 data ScheduleOwner = ScheduleOwner
-  { --scheduleOwnerIdentifier :: Maybe Int,
+  { --scheduleOwnerIdentifier :: Maybe Int64,
     scheduleOwnerName :: String,
     scheduleOwnerDescription :: Maybe String,
     scheduleOwnerAvatar :: Maybe String
@@ -64,7 +65,7 @@ data ScheduleOwner = ScheduleOwner
 
 data CommandLineCronMyLifeOptions = CommandLineCronMyLifeOptions
   { setup :: Bool,
-    userId :: Maybe Int64,
-    scheduleId :: Maybe Int64
+    userId :: String
+    -- scheduleId :: Maybe Int64
   }
   deriving (Show, Eq)

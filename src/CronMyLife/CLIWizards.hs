@@ -12,3 +12,5 @@ userCreationWizard conn = do
     rs <- createUser conn wantedName wantedDescription
     let newUserId = fromOnly (head rs)
     putStrLn $ "Success creating user with id: " ++ show newUserId
+
+--scheduleCreationWizard conn = do

@@ -7,7 +7,7 @@ import Data.Int (Int64)
 import Data.Map (Map, traverseWithKey)
 import Text.Printf
 
-showCentralSchedulerDataConsole :: ApplicationState -> IO (Map Int ())
+showCentralSchedulerDataConsole :: ApplicationState -> IO (Map Int64 ())
 showCentralSchedulerDataConsole xs =
   traverseWithKey
     showDataCLI
