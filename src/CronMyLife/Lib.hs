@@ -7,6 +7,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 
 module CronMyLife.Lib where
 
@@ -17,6 +18,7 @@ import System.Exit
 
 
 import CronMyLife.Persistence.Repository
+import Data.Int
 
 
 runApplication :: IO ()
@@ -40,18 +42,21 @@ enterEventFlow options = do
       exitSuccess
     else pure ()
 
-  -- if (bootStrapUser options)
-  --   then do
-  --     -- TODO: create a wizard-like experience
-  --     (joeId, joe) <- createAndGetJoe conn
-  --     print joe
-  --     case joe of
-  --       Nothing -> print ("Error creating user") >> exitFailure
-  --       Just x -> do
-  --         (schedId, sched) <- createAndGetSchedule conn (joeId)
-  --         print (sched)
-  --         exitSuccess
-  --   else pure ()
+  if (setupUser options)
+    then do
+      userId <- createUser conn "Joe"
+      print userId
+
+      -- TODO: create a wizard-like experience
+      -- (joeId, joe) <- createAndGetJoe conn
+      -- print joe
+      -- case joe of
+      --   Nothing -> print ("Error creating user") >> exitFailure
+      --   Just x -> do
+      --     (schedId, sched) <- createAndGetSchedule conn (joeId)
+      --     print (sched)
+      --     exitSuccess
+    else pure ()
 
   -- 2 different flow, or user gives userid and schedule
   -- or then userid only then we show list of schedules
