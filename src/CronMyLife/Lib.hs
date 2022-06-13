@@ -15,9 +15,8 @@ import CronMyLife.CLIWizards
 import CronMyLife.Model
 import CronMyLife.OptionsParser
 import CronMyLife.Persistence.Repository
-import CronMyLife.Persistence.Repository (getUserScheduleIds)
 import Data.Int
-import Database.PostgreSQL.Simple (Only (fromOnly))
+import Database.PostgreSQL.Simple
 import Options.Applicative
 import System.Exit
 
@@ -32,32 +31,34 @@ runApplication = enterEventFlow =<< execParser opts
             <> header ""
         )
 
-enterEventFlow :: CommandLineCronMyLifeOptions -> IO ()
-enterEventFlow options = do
-  conn <- setupConn
-  if setup options
+initialPreparationStage :: Connection -> Bool -> IO ()
+initialPreparationStage conn setupMode =
+  if setupMode
     then do
       setupDatabaseSchema conn
       userCreationWizard conn
       exitSuccess
-    else pure ()
+    else pure()
 
-  let givenUserId = read (userId options) :: Int64
-  if givenUserId < 1
+enterEventFlow :: CommandLineCronMyLifeOptions -> IO ()
+enterEventFlow options = do
+  conn <- setupConn
+  initialPreparationStage conn (setup options)
+
+  if cliOptionsUserId < 1
     then putStrLn "Invalid user id! Exiting..." >> exitFailure
     else do
-      scheduleIds <- getUserScheduleIds conn givenUserId
-      if (length scheduleIds) > 0 then do
+      schedules <- getUserSchedules conn cliOptionsUserId
+      if not (null schedules) then do
         putStrLn "Available schedules: "
-        mapM_ (\x -> print x) (scheduleIds)
-      else do
-        wantedSchedName <- getLine
-        wantedSchedDesc <- getLine
-        rs <- createSchedule conn wantedSchedName wantedSchedDesc
-        let newschedId = fromOnly (head rs)
-        putStrLn $ "Created schedule successfully with id:" ++ (show newschedId)
-      
+        mapM_ print schedules
+      else
+        scheduleCreationWizard conn cliOptionsUserId
+
       putStrLn "What schedule do you want to open? Please specify its numeric id"
       wantedScheduleId <- getLine
-      ched <- getScheduleById conn (read wantedScheduleId :: Int64)
-      print ched
+      sched <- getScheduleById conn (read wantedScheduleId :: Int64)
+      print sched
+
+  where
+    cliOptionsUserId = read (userId options) :: Int64

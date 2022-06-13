@@ -1,8 +1,6 @@
 module CronMyLife.OptionsParser where
 
 import CronMyLife.Model
-import Data.List.Split
-import Data.Semigroup ((<>))
 import Options.Applicative
 
 cronMyLifeOptions :: Parser CommandLineCronMyLifeOptions

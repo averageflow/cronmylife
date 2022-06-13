@@ -6,7 +6,7 @@ module CronMyLife.Model where
 import Data.Aeson
 import Data.Int (Int64)
 import Data.Map
-import Data.Typeable (Typeable)
+import Data.Typeable
 import GHC.Generics
 import Data.Time (UTCTime)
 

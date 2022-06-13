@@ -3,8 +3,8 @@
 module CronMyLife.Presentation where
 
 import CronMyLife.Model
-import Data.Int (Int64)
-import Data.Map (Map, traverseWithKey)
+import Data.Int 
+import Data.Map 
 import Text.Printf
 
 showCentralSchedulerDataConsole :: ApplicationState -> IO (Map Int64 ())
